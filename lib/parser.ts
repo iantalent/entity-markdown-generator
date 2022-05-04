@@ -1,64 +1,20 @@
 import {Fragment, FragmentContent, Heading, Paragraph, UnorderedList} from "markdown-generator";
 import {EntityMessageResolver} from "./messages";
+import {EntitySchema, Field, FieldsGroup} from "./entity";
+
 
 export interface EntityParser
 {
-	parse(entityCandidate: object, messageResolver: EntityMessageResolver): Array<FragmentContent>
+	parse(entityCandidate: EntitySchema, messageResolver: EntityMessageResolver): Array<FragmentContent>
 }
 
 export class ConfigurableEntityParser implements EntityParser
 {
-	parse(entityCandidate: object, messageResolver: EntityMessageResolver): Array<FragmentContent>
+	parse(entityCandidate: EntitySchema, messageResolver: EntityMessageResolver): Array<FragmentContent>
 	{
 		return [];
 	}
 	
-}
-
-export type EntitySchema = {
-	name?: string,
-	description?: string,
-	meta?: EntityMeta,
-	lang?: string,
-	layout?: string,
-	postDescription?: string,
-	fields?: Array<Field>,
-	groups?: Array<FieldsGroup>
-}
-
-export type EntityMeta = {
-	title?: string,
-	description?: string,
-	canonicalUrl?: string,
-	additional?: Array<MetaItem>
-}
-
-export type MetaItem = {
-	name: string,
-	content: string
-}
-
-export type Field = {
-	name: string,
-	type: string | Function,
-	values?: Array<FieldValues>,
-	description?: string,
-	containers?: Array<FieldContainer>
-}
-
-export type FieldValues = {
-	value: string,
-	description?: string
-}
-
-export type FieldContainer = {
-	type: string,
-	content: string
-}
-
-export type FieldsGroup = {
-	name: string,
-	fields: Array<Field>
 }
 
 function parseField(field: Field, messageResolver: EntityMessageResolver, headingLevel: number): Array<Fragment>
@@ -100,7 +56,7 @@ function parseGroups(groups: Array<FieldsGroup>, messageResolver: EntityMessageR
 
 export class SimpleEntityParser implements EntityParser
 {
-	parse(entityCandidate: any | EntitySchema, path: string, messageResolver: EntityMessageResolver): Array<FragmentContent>
+	parse(entityCandidate: EntitySchema, messageResolver: EntityMessageResolver): Array<FragmentContent>
 	{
 		if(typeof entityCandidate !== 'object')
 			throw new Error('Entity should be object type');

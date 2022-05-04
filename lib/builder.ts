@@ -1,6 +1,7 @@
 import {EntityParser, SimpleEntityParser} from "./parser";
 import {MessageResolver, EntityMessageResolver, PluginMessages, SimpleMessageResolver} from "./messages";
 import {FragmentContent} from "markdown-generator";
+import {EntitySchema} from "./entity";
 
 export type BuilderOptions = {
 	parser?: EntityParser,
@@ -25,11 +26,14 @@ export class EntityBuilder
 		this.messageResolver.add(Object.assign({}, defaultMessages, safeOptions.messages));
 	}
 	
-	build(entity: object, path: string): Array<FragmentContent>
+	build(entity: EntitySchema): Array<FragmentContent>
 	{
 		if(typeof entity !== 'object')
 			throw new Error('Entity should be object type');
 		
-		return this.parser.parse(entity, path, new EntityMessageResolver(this.messageResolver, path));
+		return this.parser.parse(
+			entity,
+			new EntityMessageResolver(entity, this.messageResolver)
+		);
 	}
 }

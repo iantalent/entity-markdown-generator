@@ -34,7 +34,7 @@ class MainTest
 					type: 'string'
 				}
 			]
-		}, '/path/');
+		});
 	}
 	
 	@test 'tree'()

@@ -1,4 +1,6 @@
-export type MessageValue = string | ((path: string) => string)
+import {EntitySchema} from "./entity";
+
+export type MessageValue = string | ((entity: EntitySchema) => string)
 
 export type PluginMessages = {
 	[key: string]: MessageValue
@@ -10,12 +12,12 @@ export interface MessageResolver
 {
 	add(messages: PluginMessages): void
 	
-	resolve(message: string, lang: string, replace: MessageResolverReplacement): string;
+	resolve(message: string, entity: EntitySchema, replace: MessageResolverReplacement): string;
 }
 
-export function resolveMessage(value: MessageValue, path: string): any
+export function resolveMessage(value: MessageValue, entity: EntitySchema): any
 {
-	return value && value instanceof Function ? value.call(null, path) : value;
+	return value && value instanceof Function ? value.call(null, entity) : value;
 }
 
 export class SimpleMessageResolver implements MessageResolver
@@ -27,20 +29,24 @@ export class SimpleMessageResolver implements MessageResolver
 		this.messagesContainer = Object.assign({}, this.messagesContainer, messages);
 	}
 	
-	resolve(message: string, path: string): string
+	resolve(message: string, entity: EntitySchema): string
 	{
-		return resolveMessage(this.messagesContainer[message], path) || '';
+		return resolveMessage(this.messagesContainer[message], entity) || '';
 	}
 }
 
 export class EntityMessageResolver
 {
-	constructor(private readonly resolver: MessageResolver, private readonly lang: string)
+	constructor(private readonly entity: EntitySchema, private readonly resolver: MessageResolver)
 	{
 	}
 	
 	resolve(message: string, replace: MessageResolverReplacement = null)
 	{
-		return this.resolver.resolve(message, this.lang, replace) || '';
+		return this.resolver.resolve(
+			message,
+			this.entity,
+			replace
+		) || '';
 	}
 }
