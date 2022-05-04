@@ -3,3 +3,4 @@
 Todo
 
 - [ ] Methods
+- [ ] Rewrite i18n strategy
